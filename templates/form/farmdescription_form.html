@@ -1,0 +1,20 @@
+{% extends "portal/portal.html" %}
+{% block title %}
+   Configure a new Farm.
+{% endblock %}
+
+{% block content %}
+<div id="wrap">
+    <div id="content">
+      <h1>Configure a new farm</h1>
+      <br/>
+      <form action="{% url 'form:create_farm' %}" method="post">
+      {% csrf_token %}
+      <table>{{ form.as_table}}</table>
+      <br/>
+      <input type="submit" class="styled-button-green" value="Submit" />
+      </form>
+    </div>
+</div>
+
+{% endblock %}

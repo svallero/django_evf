@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% comment %}
+  This is the main template for all portal pages.
+{% endcomment %}
+
+{% block head %}
+  <title>EVF provisioning </title>
+  {% load staticfiles %}
+  <link rel="shortcut icon" href="{% static 'portal/images/logo2.gif' %}">
+{% endblock %}
+
+
+{% block body %}
+  <div id="wrap">
+    <div id="header">
+		<div id="headerlinks">
+        <a href="/portal" title="User Portal home">Home</a>
+		<a href="/" title="Documentation">Documentation</a>
+        <a href="/logout" title="Logout">Logout</a>
+		</div>
+		<h1>EVF provisioning user portal</h1>
+    </div>
+
+    <div id="sidebar">
+		<div class="box">
+		  <ul>
+		  <li><a href="/form/list">My virtual farms</a></li>
+          <li><a href="/form">Create a new virtual farm</a></li>
+          <li><a href="/form/dashboard">Cloud dashboard</a></li>
+          <li><a href="#">Other</a></li>
+		  </ul>
+		</div>
+
+    </div>
+
+    <div id="content">
+
+       {% if user.is_authenticated %}
+          <p>You are logged in as user: {{ user.username }} </p>
+       {% else %}
+          <p>You are not logged in.</p>
+       {% endif%}
+
+    </div>
+    {% block content %}{% endblock %}
+
+    <div style="float: right; ">
+           {% load staticfiles %}
+           <img src="{% static 'portal/images/logo.gif' %}" alt="Logo" height="150"/>
+    </div>
+
+
+    <div id="footer">
+       <a href="#" title="Powered by">Powered by the INFN Torino Computing Centre</a>
+    </div>
+
+
+  </div>
+
+
+
+{% endblock %}

@@ -1,0 +1,173 @@
+#cloud-config
+
+# Mailto: svallero@to.infn.it
+
+bootcmd:
+  - chkconfig elastiq off || sysv-rc-conf elastiq off 
+
+users:
+ - default
+
+# fatto nell'immagine di base
+#packages:
+# - condor
+# - vim-enhanced
+# - nfs-utils
+# - nfs-utils-lib
+
+#mounts:
+# - [ /swap, swap, swap, sw ]
+
+# partition the ephemeral disk
+disk_setup:
+  /dev/vdb:
+    type: 'mbr'
+    layout:
+      - [33,82] # one-third is swap
+      - 66      # the rest /tmp
+    overwrite: True
+
+fs_setup:
+    - label: tmp
+      filesystem: 'ext4'
+      device: '/dev/vdb2'
+      partition: 'auto'
+    - label:  swap
+      filesystem: 'swap'
+      device: '/dev/vdb1'
+
+mounts:
+  - [ "/dev/vdb1", "none",  "swap", "sw", "0", "0" ]
+  - [ "/dev/vdb2", "/tmp",  "ext4", "defaults", "0", "0" ]
+
+# fatto nell'immagine di base
+#yum_repos:
+#  # http://research.cs.wisc.edu/htcondor/yum/repo.d/htcondor-stable-rhel6.repo
+#  htcondor-stable:
+#    name: HTCondor Stable RPM Repository for Redhat Enterprise Linux 6
+#    baseurl: http://research.cs.wisc.edu/htcondor/yum/stable/rhel6
+#    enabled: true
+#    gpgcheck: false
+
+
+write_files:
+ - content: |
+     # written by cloud-init
+     [Boto]
+     ca_certificates_file = /etc/boto_cacerts.txt
+   path: /etc/boto.cfg
+   permissions: '0644'
+   owner: root:root
+ - content: |
+     # written by cloud-init
+     -----BEGIN CERTIFICATE-----
+     MIIDczCCAlugAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJJVDEN
+     MAsGA1UEChMESU5GTjEQMA4GA1UEAxMHSU5GTiBDQTAeFw0wNjEwMDMxNDE2NDda
+     Fw0xNjEwMDMxNDE2NDdaMC4xCzAJBgNVBAYTAklUMQ0wCwYDVQQKEwRJTkZOMRAw
+     DgYDVQQDEwdJTkZOIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+     zpWODoOVnUKpyikjyrdj+QpJuoJeKkqF4fbd6LrqeQL0dqAiluVR8D4y/T2Mqvsd
+     H/fg0s3EYZUDQZimcAmC3ammTX3rqXOz34GWLGpXoXAmUVKWPNFJo6rAEwhw3Sja
+     a8mEjMiZE/JigHN5RI8K6taKtjL/jE4XUTZOGbvlKsROxzJPM6bO4GJdYO+qhK9E
+     5HsbV699DYyukBfUB6ChtD6GDbcdPKUKwheni5j0v6smFjiBEb3VQg4O+uBWTHMP
+     116L9kPY+I7ojzXLuayMTd+6TXzunR33+v6h8AtLChcQRt4vj7oG/scTg3eSnFsq
+     oEO4D4IF9v481GJJwg58LwIDAQABo4GbMIGYMA8GA1UdEwEB/wQFMAMBAf8wDgYD
+     VR0PAQH/BAQDAgEGMB0GA1UdDgQWBBTRYvOzd3LILvvyeRpvN04nnxPVIDBWBgNV
+     HSMETzBNgBTRYvOzd3LILvvyeRpvN04nnxPVIKEypDAwLjELMAkGA1UEBhMCSVQx
+     DTALBgNVBAoTBElORk4xEDAOBgNVBAMTB0lORk4gQ0GCAQAwDQYJKoZIhvcNAQEF
+     BQADggEBAHjX0z+3P3JyQGIBI5aAXOS3NuDEf0MdqCLFIGsXjtvIm2kDSMSGQOg5
+     uZnJLTAhaT+gX5eNkDdzhuuJEgW1FPGDy2If6zgD4T4EsS50E+L5BTNOG78UzF4H
+     9DGBlbrkD8VEug9RpxGusSweGGlnO6CT/U1Tb3XY5ZjIrMubh09UwmjK9nEIe3vC
+     RPInAkbmamteezpKOqC5Knj0ZpqU+CnWkuyYnjslX1e9O5lbupLTp5NOqZRCFn1i
+     iTjpoNefgqLE3sHedgb2P1vS8lO+EIhRnWgfN9qAHSqkQ+ZObxIfPJFdcluu8d/K
+     tXsFkKmmFuEHd0SrYpBh9ZCLDgq2x9Y=
+     -----END CERTIFICATE-----
+   path: /etc/boto_cacerts.txt
+   permissions: '0644'
+   owner: root:root
+ - content: |
+     # written by cloud-init
+     DAEMON_LIST = COLLECTOR, MASTER, NEGOTIATOR, SCHEDD
+     CONDOR_HOST = $(FULL_HOSTNAME) 
+     CONDOR_ADMIN = root@$(FULL_HOSTNAME)
+     UID_DOMAIN = *
+     TRUST_UID_DOMAIN = True
+     SOFT_UID_DOMAIN = True
+     QUEUE_SUPER_USERS = root, condor
+     HIGHPORT = 42000
+     LOWPORT = 41000
+     SEC_DAEMON_AUTHENTICATION = required
+     SEC_DAEMON_INTEGRITY = required
+     SEC_DAEMON_AUTHENTICATION_METHODS = password
+     SEC_CLIENT_AUTHENTICATION_METHODS = password,fs,gsi,kerberos
+     SEC_PASSWORD_FILE = /etc/condor/condor_credential
+     SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION = True
+     ALLOW_DAEMON = condor_pool@*, submit-side@matchsession
+     COLLECTOR_NAME = Condor cluster at \$(CONDOR_HOST)
+     NEGOTIATOR_INTERVAL = 20
+     START = TRUE
+     SUSPEND = FALSE
+     PREEMPT = FALSE
+     KILL = FALSE
+     TRUST_UID_DOMAIN = TRUE
+     UPDATE_COLLECTOR_WITH_TCP = True
+     COLLECTOR_SOCKET_CACHE_SIZE = 1000
+     # this is a dummy value to prevent job killing for consuming too much mem
+     JOB_DEFAULT_REQUESTMEMORY = 42
+   path: /etc/condor/condor_config.local
+   permissions: '0644'
+   owner: root:root
+ - content: |
+     # written by cloud-init
+     [elastiq]
+     sleep_s = 20 
+     check_queue_every_s = <check_queue_every_s>
+     check_vms_every_s = <check_vms_every_s>
+     check_vms_in_error_every_s = <check_vms_in_error_every_s>
+     waiting_jobs_threshold = 0 
+     waiting_jobs_time_s = <waiting_jobs_time_s>
+     n_jobs_per_vm = <n_jobs_per_vm>
+     idle_for_time_s = <idle_for_time_s>
+     estimated_vm_deploy_time_s = <estimated_vm_deploy_time_s>
+     batch_plugin = htcondor
+     log_level = 0
+     
+     [debug]
+     #dry_run_shutdown_vms = 1
+     #dry_run_boot_vms = 1
+     
+     [quota]
+     min_vms = <min_vms>
+     max_vms = <max_vms>
+
+     [ec2]
+     api_url = https://one-master.to.infn.it/ec2api/
+     aws_access_key_id = <aws_access_key_id>
+     aws_secret_access_key = <aws_secret_access_key>
+     image_id = <image_id>
+     api_version = 2013-02-01
+     key_name = <key_name>
+     flavour = <flavour>
+     user_data_b64 = <user_data_b64>  
+   path: /etc/elastiq.conf
+   permissions: '0660'
+   owner: elastiq:elastiq
+ - content: |
+     # written by cloud-init
+<master_userdata>
+   path: /root/custom_user_data
+   permissions: '0770'
+   owner: root:root
+
+runcmd:
+ - [ swapoff, /swap ]
+ - [ rm, -rf, /swap ]
+ - [ service, iptables, stop ]
+ - [ mv, -f, /etc/condor/condor_config.rpmnew, /etc/condor/condor_config ]
+ - [ rm, -f, /etc/condor/condor_credential ]
+ - [ condor_store_cred, add, -c, -p, <condor_secret> ]
+ - [ service, condor, start ]
+ # elastiq 
+ # anche questo e' gia' fatto nell'immagine di base
+ #- [ wget, "https://github.com/dberzano/elastiq/releases/download/v1.0.3/python-elastiq-1.0.3-1.py26.noarch.rpm" ]
+ #- [ yum, -y, localinstall, python-elastiq-1.0.3-1.py26.noarch.rpm ] 
+ - [ /root/custom_user_data ]

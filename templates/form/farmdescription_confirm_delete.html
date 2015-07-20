@@ -1,0 +1,15 @@
+{% extends "portal/portal.html" %}
+{% block title %}
+   Delete farm.
+{% endblock %}
+
+{% block content %}
+<div id="wrap">
+  <div id="content">
+  <form action="" method="post">{% csrf_token %}
+    <h2><font color="red">Are you sure you want to delete "{{ object }}"?</font></h2>
+    <br/>
+    <input type="submit" class="styled-button-red" value="Confirm" />
+  </form>
+</div>
+{% endblock %}

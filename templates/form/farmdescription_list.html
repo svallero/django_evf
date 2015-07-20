@@ -1,0 +1,27 @@
+{% extends "portal/portal.html" %}
+{% block title %}
+   List user farms.
+{% endblock %}
+
+{% block content %}
+<div id="wrap">
+    <div id="content">
+      <h1> You farm definitions </h1>
+      <br/>
+{% if farm_list %}
+      <ul>
+      <table border="1" style="border: 1px solid black; width:100%">
+        <tr><th>Id</th><th>Name</th><th>Description</th></tr>
+        {% for farm in farm_list %}
+        <tr>
+          <td> <a href="{% url 'form:display_farm' farm.id %}">{{ farm.id }}</a></td><td>{{ farm.farm_name}}</td><td>{{ farm.farm_description}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      </ul>
+{% else %}
+   <p>No farms available.</p>
+{% endif %}
+ </div>
+</div>
+{% endblock %}

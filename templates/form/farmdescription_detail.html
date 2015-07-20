@@ -1,0 +1,38 @@
+{% extends "portal/portal.html" %}
+{% block title %}
+   Show farm details.
+{% endblock %}
+
+{% block content %}
+<div id="wrap">
+    <div id="content">
+      <h2>Farm: {{ farm_description.farm_name }}</h2>
+      <br/>
+
+      {% csrf_token %}
+      {% for name, value in farm_description.get_fields %}
+        {% if name == "master_userdata" or name == "worker_userdata" %}
+          <li><b>{{ name }}:</b> {{ value|linebreaks }}</li>
+        {% else %}
+          <li><b>{{ name }}:</b> {{ value }}</li>
+        {% endif %}
+      {% endfor %}
+      <br/>
+      <div style="width:400px;">
+      <div style="float: left; width: 130px">   
+      <form action="{% url 'form:instantiate_farm' farm_description.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" class="styled-button-green" value="Instantiate" id="instantiate" />
+      </form>
+      </div>
+      <div style="float: right; width: 225px"> 
+      <form action="{% url 'form:delete_farm' farm_description.id %}" method="GET">
+        {% csrf_token %}
+        <input type="submit" class="styled-button-red" value="Delete" id="instantiate" />
+      </form>
+      </div>
+      </div>
+      <br/>
+     </div>
+</div>
+{% endblock %}

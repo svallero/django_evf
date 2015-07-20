@@ -1,0 +1,18 @@
+{% extends "portal/portal.html" %}
+{% block title %}
+   Instantiate Farm output.
+{% endblock %}
+
+{% block content %}
+<div id="wrap">
+    <div id="content">
+      {% if retval %}
+        <p>{{ retval }}<p>
+      {% else %}
+        <p>No output available.<p>
+      {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

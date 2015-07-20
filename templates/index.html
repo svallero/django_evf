@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% comment %}
+  Main page of EVF provisioning.
+{% endcomment %}
+
+{% block head %}
+  <title>EVF provisioning </title>
+  {% load staticfiles %}
+  <link rel="shortcut icon" href="{% static 'portal/images/logo2.gif' %}">
+{% endblock %}
+
+{% block body %}
+  <div id="wrap">
+    <div id="header">
+		<div id="headerlinks">
+		<a href="/portal" title="User Portal">Go to the User Portal</a>
+		<a href="#" title="Contact">Contact</a>
+		</div>
+		<h1>Elastic Virtual Farm Provisioning</h1>
+	</div>
+
+   <div id="content">
+       <h2>What is an Elastic Virtual Farm? <span class="post-span">- by Sara from 13 Jul 2015</span></h2>
+       <p>An Elastic Virtual Farm is a cluster of virtual machines able to auto-scale accoring to the load. It runs a batch system based on HTCondor. In its basic configuration it's composed by a master and a (configurable) fixed number of workers. When the number of queued jobs exceeds the workers' capacity, new workers are istantiated automatically on the Cloud and undeployed whenever idle. This functionality is provided by a custom daemon, running on the master machine, called <i>elastiq.</i></p>
+       <p>Each virtual farm runs in a <i>sandboxed environment</i> within the Cloud. This means that each cluster has its ownn isolated virtual network and an associated VRouter acting as gateway and providing DHCP and DNS functionalities. One machine of the cluster, normally the master, can be assigned a public IP. This is called the <i>elastic IP</i> and corresponds to the VRouter public address. Once a virtual machine is assigned the elastic IP (more on this later), a port forwarding rule is enabled on the VRouter for port 22. More ports can be forwarded on request. </p>
+       <p>More info:
+       <a href="http://research.cs.wisc.edu/htcondor/">HTCondor</a>,
+       <a href="https://github.com/dberzano/elastiq">Elastiq</a>,
+       <a href="http://iopscience.iop.org/1742-6596/513/3/032100?fromSearchPage=true">Sandbox</a>.</p>
+    </div>
+   <div id="content">
+       <h2>Let's get started! <span class="post-span">- by Sara from 13 Jul 2015</span></h2>
+       <p>In order to get a user account, send us a mail (link on top right of this page) indicating you requests, i.e. operating system, disk space, anything else. Or come to visit us at the Computing Centre.</p>
+       <p>You will be provided with a user account valid for this web portal and for the public login machine to access the Cloud (one-access.to.infn.it) and included in the newsletter mailing-list. A new sandboxed environment and elastic IP will be created for you.</p>
+       <p>You will use this web portal only to configure and instantiate a new virtual farm. In order to manage your farm, you should login to one-access.to.infn.it, run the command <i>cloud-enter</i> and input your username and password. This will set-up the proper environment to access the Cloud. Most operations can also be performed with the Cloud Dashboard, accessible fom the right menu on your user space in this site.  </p>
+       <p>Some preliminary action once you have logged in to one-access for the first time:</p>
+       <ul text-indent:50px>
+          <li>
+          <b>1.</b> create a pair of public/private ssh keys. This is achieved with the command:
+          <p> 
+          <code>euca-create-keypair -f privkey.pem your_key_name</code>
+          </p>
+          The first argument specifies the file where the private key will be stored, do not lose this file! The second argument is the name of the keypair stored in OpenNebula. The corresponding public key will be shipped with your newly created virtual machines so that you can connect to them as <i>root</i> user (<i>ubuntu</i> user for the Ubuntu OS). For the time being only one keypair can be created. If you need it to be reset, please contact us.
+          </li>  
+          <li>
+          <b>2.</b> run the command:
+          <p>
+          <code> echo $EC2_SECRET_KEY</code>
+          </p>
+          and "write down" the encrypted version of your password. You will need it to configure a new virtual farm.
+          </li>
+          <li>
+          <b>3.</b> allocate the elastic IP:
+          <p>
+          <code> euca-allocate-address</code>
+          </p>
+          </li>
+        </ul>
+    </div>
+   <div id="content">
+       <h2>Creating a new virtual farm.<span class="post-span">- by Sara from 14 Jul 2015</span></h2>
+       <p>Click on <i>Go to the User Portal</i> in the top menu and then <i>Create a new virtual farm</i> in the right hand menu. Find below an explanation of the most relevant fields to be filled in.</p>
+       <p>
+       <ul text-indent:50px>
+          <li>
+          <b>EC2 access key:</b> your username
+          </li>
+          <li>
+          <b>EC2 secret key:</b> the encrypted password
+          </li>
+          <li>
+          <b>Root ssh key:</b> the name of the ssh keypair as stored in OpenNebula. 
+          </li>
+          <li>
+          <b>OS image:</b> for the time being only a CentOS 6.6 and UbuntuServer 14.04 images are available. If you need anotehr OS, please contact us. Master and Workers will run the same OS.
+          </li>
+          <li>
+          <b>Master/Worker flavour:</b> type of the instance to be run. You can specify a different flavour for Master and Workers. For a list of available flavours refer to <a href="http://personalpages.to.infn.it/~berzano/cloud/user_guide.html#list-of-possible-flavors">this page</a>. If you need a custom flavour, please contact us. 
+          </li>
+          <li>
+          <b>Master/Worker user-data:</b> a custom script (i.e. bash) to configure your virtual machines. It is executed automatically after the boot sequence. HTCondor and Elastiq are already installed so you do not have to take care of this. 
+          </li>
+          <li>
+          <b>Condor shared secret:</b> any alphanumeric string. This is the password used to secure communication between Master and Workers.
+          </li>
+          <li>
+          <b>Minimum jobs waiting time:</b> time in seconds a job should stay in the queue before Elastiq instantiates a new virtual machine.
+          </li>
+          <li>
+          <b>Number of jobs per VM:</b> normally this should be set to the number of CPUs of the Worker virtual machine (1 job per core), unless your application is multicore. 
+          </li>
+          <li>
+          <b>Maximum VM idle time:</b> time in seconds before an idle virtual machine is automatically undeployed by Elastiq.
+          </li>
+          <li>
+          <b>Min/Max number of workers:</b> minimum number of workers never undeployed and maximum number of workers that Elastiq can instantiate. The latter is in any case limited by the user quota agreed upon.
+          </li>
+        </ul>
+        </p>
+        <p>
+        After configuring your farm, you should click the button <i>Submit</i>. This will save your farm definition and redirect you to a summary page, from which you can either instantiate or delete your newly created farm. The <i>Instantiate</i> button automatically deploys the Master virtual machine on the Cloud. You can check this either from the Dashboard or from the command line. 
+        On one-access run the command:
+        <p>
+           <code>euca-describe-instances </code>
+        </p>
+        You will see the first virtual machine instantiated and after a while also the number of workers that you specified with <i>Min/Max number of workers</i> should appear.
+        </p>
+        <p>
+        Now it's time to associate the elastic IP to the first instance:
+        <p>
+           <code>euca-associate-address 193.205.66.xxx -i i-000xxxxx </code>
+        </p>
+        You can connect to the Master like this:
+        <p>
+           <code>ssh -i privatekey.pem root@193.205.66.xxx </code>
+        </p>
+        or alternatively:
+        <p>
+           <code>ssh -i privatekey.pem root@cloud-gw-xxx.to.infn.it </code>
+        </p>
+
+       </p>
+    </div>
+   <div id="content">
+       <h2>Customizing your farm. <span class="post-span">- by Sara from 14 Jul 2015</span></h2>
+       <p>
+       We give here an example of user-data scripts to <i>contextuaize</i> master and worker virtual machines. The example shows how to configure an NFS server on the Master in order to export an external disk (i.e. your persistent home space) to all Workers. First of all, attach the disk to the Master using the OpenNebula GUI or the command-line. Then login to the master and run the script <i>/root/mount_home.sh</i>, this will mount and export the home directory to the other nodes. Moreover, the script also creates new users.       </p>
+       <p>
+       <b>Master user-data:</b><br>
+        <code>
+          #!/bin/sh <br>
+          <br>
+          # write a script to mount and export the home dir <br>
+          # the script should be run by hand after attaching the device <br>
+          cat &lt;&lt;EOF &gt; /root/mount_home.sh <br>
+          #!/bin/sh <br>
+          mkdir -p /export/home <br>
+          echo "/dev/vdd /home ext4 defaults,noatime 0 0" &gt;&gt; /etc/fstab <br>
+          echo "/home /export/home none bind 0 0" &gt;&gt; /etc/fstab <br>
+          mount -a <br>
+          echo "/home 172.16.XXX.0/24(rw,sync,no_root_squash,no_subtree_check)" &gt;&gt; /etc/exports <br>
+          service rpcbind start <br>
+          service nfs start || service nfs-kernel-server start<br>
+          exportfs -a <br>
+          service nfs restart || service nfs-kernel-server restart<br>
+          chkconfig nfs on || sysv-rc-conf nfs-kernel-server on <br>
+          <br>
+          # add users <br>
+          # it should be done in this script after mounting the home <br>
+          # it is important to specify the UID in order to be consistent with <br>
+          # the permissions on the homes already created on the volume <br>
+          <br>
+          useradd -m -u 503 dummy <br>
+          <br> 
+          # always remember to start elastiq <br>
+          # it is stopped at boot to give you time to mount the home <br>
+          # or the nodes will not be able to import it <br>
+          <br>
+          service elastiq start <br>
+          <br>
+          EOF <br>
+          <br>
+          chmod +x /root/mount_home.sh <br>
+        </code>
+        </p>
+        <p>
+        <b>Workers user-data:</b> <br>
+          <code>
+            #!/bin/sh <br>
+            <br>
+            IP=`condor_config_val CONDOR_HOST` <br>
+            mount -t nfs $IP:/home /home <br>
+            <br>
+            useradd -m -u 503 dummy <br>
+          </code>  
+        </p>
+       <p>
+       Please consider that the Cloud is a volatile environment. Virtual machines could disappear at any moment (hopefully they will not) and any configuration done <i>by hand</i> will be lost. So write down any customization (i.e. configurations or packages installation) on the context script so that the same environment is recovered when your instance is re-deployed. Alternatively save everything on the persistent disk space. 
+       </p>
+    </div>
+   <div id="content">
+       <h2>Operating your farm. <span class="post-span">- by Sara from 14 Jul 2015</span></h2>
+       In order to operate your farm (i.e. check running instances, get accounting data...) use the Cloud Dashboard or the command line from one-access.to.infn.it. In the first case refer to the <a href="http://docs.opennebula.org/4.8/user/index.html">OpenNebula documentation</a>, in the latter to <a href="http://personalpages.to.infn.it/~berzano/cloud/user_guide.html">this page</a> (starting from section 2.3). 
+    </div>
+
+   <div style="float: right; ">
+         {% load staticfiles %}
+         <img src="{% static 'portal/images/logo.gif' %}" alt="Logo" height="150"/>
+   </div>
+
+   <div id="footer">
+       <a href="#" title="Powered by">Powered by the INFN Torino Computing Centre</a>
+   </div>
+
+  </div>
+
+{% endblock %}
