@@ -30,7 +30,8 @@ def main():
 
   # substitute variables in template file
   #f=open(os.path.join(settings.BASE_DIR, 'context_files/context_master.cloudinit'),'r')
-  f_slave=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_slave_centos.cloudinit','r')
+  #f_slave=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_slave_centos.cloudinit','r')
+  f_slave=open(os.path.join(BASE_DIR, 'context_files/context_slave_centos.cloudinit'),'r')
   user_data_slave=f_slave.read()
   user_data_slave=user_data_slave.replace("<condor_secret>", str(shared_secret))
   # encode workers user-data in base64 
@@ -56,7 +57,7 @@ def main():
   user_data_master=user_data_master.replace("<user_data_b64>", str(user_data_slave_b64))
   user_data_master=user_data_master.replace("<condor_secret>", str(shared_secret))
 
-  print user_data_master
+  print (user_data_master)
   #print user_data_slave_b64
 
 

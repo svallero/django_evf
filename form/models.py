@@ -7,7 +7,7 @@ class FarmDescription(models.Model):
 
     IMAGES = (
         ('ami-00000679', '679 - UbuntuServer 14.04'),
-        ('ami-00000675', '675 - CentOS 6.6'),
+        ('ami-00000687', '687 - CentOS 6.6'),
     )
 
     FLAVOURS = (

@@ -84,7 +84,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
 #STATIC_ROOT = ''
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
@@ -101,3 +101,12 @@ TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 60 * 60 # 60 minutes
+
+SESSION_COOKIE_SECURE = True
+
+STATIC_ROOT = os.path.join(os.path.dirname(
+                os.path.abspath(__file__)), '')
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'

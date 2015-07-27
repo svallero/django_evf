@@ -31,7 +31,7 @@ def main(farm):
 
   # substitute variables in slave template file
   try:
-     f_slave=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_slave_centos.cloudinit','r')
+     f_slave=open(os.path.join(settings.BASE_DIR, 'context_files/context_slave_centos.cloudinit'),'r')
      user_data_slave=f_slave.read()
      user_data_slave=user_data_slave.replace("<condor_secret>", str(shared_secret))
      user_data_slave=user_data_slave.replace("<worker_userdata>", indent(worker_userdata,'     '))
@@ -43,7 +43,7 @@ def main(farm):
   
   # substitute variables in master template file
   try:
-     f_master=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_master_centos.cloudinit','r')
+     f_master=open(os.path.join(settings.BASE_DIR, 'context_files/context_master_centos.cloudinit'),'r')
      user_data_master=f_master.read()
  
      user_data_master=user_data_master.replace("<check_queue_every_s>", str(check_queue_every))
@@ -72,8 +72,8 @@ def main(farm):
   try:
      conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
                                  aws_access_key_id=ec2_access_key,
-                                 aws_secret_access_key=ec2_secret_key,
-                                 validate_certs=False)
+                                 aws_secret_access_key=ec2_secret_key)
+                                 #validate_certs=False)
      conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key, user_data=str(user_data_master))
      reservations = conn.get_all_reservations()
      inst=reservations[0].instances
