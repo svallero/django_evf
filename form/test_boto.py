@@ -10,7 +10,7 @@ def main():
   #ec2_access_key = 'oneadmin'
   #ec2_secret_key = 'd2154097e7420fb39d8b101dd521cc29717772eb'
   ssh_key = 'sara'
-  master_image = 'ami-00000653'
+  master_image = 'ami-00000687'
   master_flavour = 'm1.large'
   master_userdata =  'echo "pippo" > /root/pippo.txt'
   worker_flavour  = 'm1.large'
