@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% comment %}
+  Main page of EVF provisioning.
+{% endcomment %}
+
+{% block head %}
+  <title>EVF provisioning </title>
+  {% load staticfiles %}
+  <link rel="shortcut icon" href="{% static 'portal/images/logo2.gif' %}">
+{% endblock %}
+
+{% block body %}
+  <div id="wrap">
+    <div id="header">
+		<div id="headerlinks">
+		<a href="/portal" title="User Portal">Go to the User Portal</a>
+		<a href="/contacts" title="Contacts">Contacts</a>
+		</div>
+		<h1>Elastic Virtual Farm Provisioning</h1>
+	</div>
+
+   <div id="content">
+       <h2>Contacts</h2>
+       <p>
+         &#128222; 670 7347 <a href="mailto:svallero@to.infn.it">Sara Vallero</a> 
+       </p>
+       <p>
+         &#128222; 670 xxxx <a href="mailto:bagnasco@to.infn.it">Stefano Bagnasco</a> 
+       </p>
+       <p>
+         &#128222; 670 xxxx <a href="mailto:lusso@to.infn.it">Stefano Lusso</a>  
+       </p>
+   </div>
+   <div style="float: right; ">
+         {% load staticfiles %}
+         <img src="{% static 'portal/images/logo.gif' %}" alt="Logo" height="150"/>
+   </div>
+
+   <div id="footer">
+       <a href="#" title="Powered by">Powered by the INFN Torino Computing Centre</a>
+   </div>
+
+  </div>
+
+{% endblock %}
