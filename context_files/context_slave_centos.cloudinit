@@ -83,6 +83,7 @@ write_files:
    owner: root:root
 
 runcmd:
+ - [ chmod, 1777, /tmp ]
  - [ swapoff, /swap ]
  - [ rm, -rf, /swap ]
  - [ service, iptables, stop ]
