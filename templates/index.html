@@ -14,7 +14,7 @@
     <div id="header">
 		<div id="headerlinks">
 		<a href="/portal" title="User Portal">Go to the User Portal</a>
-		<a href="#" title="Contact">Contact</a>
+		<a href="/contacts" title="Contacts">Contacts</a>
 		</div>
 		<h1>Elastic Virtual Farm Provisioning</h1>
 	</div>
@@ -78,7 +78,8 @@
           <b>Master/Worker flavour:</b> type of the instance to be run. You can specify a different flavour for Master and Workers. For a list of available flavours refer to <a href="http://personalpages.to.infn.it/~berzano/cloud/user_guide.html#list-of-possible-flavors">this page</a>. If you need a custom flavour, please contact us. 
           </li>
           <li>
-          <b>Master/Worker user-data:</b> a custom script (i.e. bash) to configure your virtual machines. It is executed automatically after the boot sequence. HTCondor and Elastiq are already installed so you do not have to take care of this. 
+          <b>Master/Worker user-data:</b> a custom script (i.e. bash) to configure your virtual machines. It is executed automatically after the boot sequence. HTCondor and Elastiq are already installed so you do not have to take care of this.<br>
+IMPORTANT: in the master user-data the instruction: <i>service elastiq start</i> should always be present. Alternatively, you have to run the command by hand on the master machine as privileged user.  
           </li>
           <li>
           <b>Condor shared secret:</b> any alphanumeric string. This is the password used to secure communication between Master and Workers.
@@ -124,7 +125,7 @@
    <div id="content">
        <h2>Customizing your farm. <span class="post-span">- by Sara from 14 Jul 2015</span></h2>
        <p>
-       We give here an example of user-data scripts to <i>contextuaize</i> master and worker virtual machines. The example shows how to configure an NFS server on the Master in order to export an external disk (i.e. your persistent home space) to all Workers. First of all, attach the disk to the Master using the OpenNebula GUI or the command-line. Then login to the master and run the script <i>/root/mount_home.sh</i>, this will mount and export the home directory to the other nodes. Moreover, the script also creates new users.       </p>
+       We give here an example of user-data scripts to <i>contextuaize</i> master and worker virtual machines. The example shows how to configure an NFS server on the Master in order to export an external disk (i.e. your persistent home space) to all Workers. First of all, attach the disk to the Master using the OpenNebula GUI or the command-line. Then login to the master and run the script <i>/root/mount_home.sh</i>, this will mount and export the home directory to the other nodes. Moreover, the script also creates new users. Always insert a blank line at the end of the script!      </p>
        <p>
        <b>Master user-data:</b><br>
         <code>

@@ -32,11 +32,13 @@ class FarmDescription(models.Model):
     # master configuration
     master_image = models.CharField(verbose_name="OS image", max_length=30, choices=IMAGES, default='CentOS')
     master_flavour = models.CharField(verbose_name="Master flavour", max_length=30, choices=FLAVOURS, default='m1.small')
-    master_userdata = models.TextField(verbose_name="Master user-data", max_length=1000, default='')
+    #master_userdata = models.TextField(verbose_name="Master user-data", max_length=1000, default='')
+    master_userdata = models.TextField(verbose_name="Master user-data", default='')
     # workers configuration
     #worker_image = models.CharField(verbose_name="Worker image", max_length=30, choices=IMAGES, default='CentOS')
     worker_flavour = models.CharField(verbose_name="Worker flavour", max_length=30, choices=FLAVOURS, default='m1.small')
-    worker_userdata = models.TextField(verbose_name="Worker user-data", max_length=1000, default='')
+    #worker_userdata = models.TextField(verbose_name="Worker user-data", max_length=1000, default='')
+    worker_userdata = models.TextField(verbose_name="Worker user-data", default='')
     # condor shared secret
     shared_secret = models.CharField(verbose_name="Condor shared secret", max_length=100, default='')
     # elastiq configuration

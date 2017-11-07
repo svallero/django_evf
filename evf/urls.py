@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     (r'^logout/$', logout_page),
     # web portal.
     (r'^portal/', include('portal.urls')),
+    (r'^contacts/$', contacts_page),
     # serve static content.
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve',
     #    {'document_root': 'static'}),

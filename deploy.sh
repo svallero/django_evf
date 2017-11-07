@@ -1,6 +1,6 @@
 #!/bin/bash
   set -e
-  LOGFILE=/var/log/evf.log
+  LOGFILE=/home/evf/django_evf/log/evf.log
   LOGDIR=$(dirname $LOGFILE)
   # Number of worker processes. 
   # Should be no less than the number of cores available and a popular formula
@@ -11,10 +11,10 @@
 
   GROUP=evf
 
-  cd /root/evf/django_evf
+  cd /home/evf/django_evf
 
   # Activate the virtualenv - replace the path with the path to wherever your venv lives.
-  source /root/evf/django_evf/venv/bin/activate
+  source /home/evf/django_evf/venv/bin/activate
 
   test -d $LOGDIR || mkdir -p $LOGDIR
 

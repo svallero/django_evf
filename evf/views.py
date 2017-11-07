@@ -11,3 +11,6 @@ def logout_page(request):
     """
     logout(request)
     return HttpResponseRedirect('/')
+
+def contacts_page(request):
+    return render_to_response('contacts.html')
