@@ -23,22 +23,28 @@ disk_setup:
   /dev/vdb:
     type: 'mbr'
     layout:
-      - [33,82] # one-third is swap
-      - 66      # the rest /tmp
+      - [25,82] # 1/4 is swap
+      - 25      # 1/4 is /tmp
+      - 50      # 1/2 is /cvmfs
     overwrite: True
 
 fs_setup:
+    - label:  swap
+      filesystem: 'swap'
+      device: '/dev/vdb1'
     - label: tmp
       filesystem: 'ext4'
       device: '/dev/vdb2'
       partition: 'auto'
-    - label:  swap
-      filesystem: 'swap'
-      device: '/dev/vdb1'
+    - label: cvmfs
+      filesystem: 'ext4'
+      device: '/dev/vdb3'
+      partition: 'auto'
 
 mounts:
   - [ "/dev/vdb1", "none",  "swap", "sw", "0", "0" ]
   - [ "/dev/vdb2", "/tmp",  "ext4", "defaults", "0", "0" ]
+  - [ "/dev/vdb3", "/cvmfs",  "ext4", "defaults", "0", "0" ]
 
 # fatto nell'immagine di base
 #yum_repos:
@@ -61,26 +67,38 @@ write_files:
  - content: |
      # written by cloud-init
      -----BEGIN CERTIFICATE-----
-     MIIDczCCAlugAwIBAgIBADANBgkqhkiG9w0BAQUFADAuMQswCQYDVQQGEwJJVDEN
-     MAsGA1UEChMESU5GTjEQMA4GA1UEAxMHSU5GTiBDQTAeFw0wNjEwMDMxNDE2NDda
-     Fw0xNjEwMDMxNDE2NDdaMC4xCzAJBgNVBAYTAklUMQ0wCwYDVQQKEwRJTkZOMRAw
-     DgYDVQQDEwdJTkZOIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-     zpWODoOVnUKpyikjyrdj+QpJuoJeKkqF4fbd6LrqeQL0dqAiluVR8D4y/T2Mqvsd
-     H/fg0s3EYZUDQZimcAmC3ammTX3rqXOz34GWLGpXoXAmUVKWPNFJo6rAEwhw3Sja
-     a8mEjMiZE/JigHN5RI8K6taKtjL/jE4XUTZOGbvlKsROxzJPM6bO4GJdYO+qhK9E
-     5HsbV699DYyukBfUB6ChtD6GDbcdPKUKwheni5j0v6smFjiBEb3VQg4O+uBWTHMP
-     116L9kPY+I7ojzXLuayMTd+6TXzunR33+v6h8AtLChcQRt4vj7oG/scTg3eSnFsq
-     oEO4D4IF9v481GJJwg58LwIDAQABo4GbMIGYMA8GA1UdEwEB/wQFMAMBAf8wDgYD
-     VR0PAQH/BAQDAgEGMB0GA1UdDgQWBBTRYvOzd3LILvvyeRpvN04nnxPVIDBWBgNV
-     HSMETzBNgBTRYvOzd3LILvvyeRpvN04nnxPVIKEypDAwLjELMAkGA1UEBhMCSVQx
-     DTALBgNVBAoTBElORk4xEDAOBgNVBAMTB0lORk4gQ0GCAQAwDQYJKoZIhvcNAQEF
-     BQADggEBAHjX0z+3P3JyQGIBI5aAXOS3NuDEf0MdqCLFIGsXjtvIm2kDSMSGQOg5
-     uZnJLTAhaT+gX5eNkDdzhuuJEgW1FPGDy2If6zgD4T4EsS50E+L5BTNOG78UzF4H
-     9DGBlbrkD8VEug9RpxGusSweGGlnO6CT/U1Tb3XY5ZjIrMubh09UwmjK9nEIe3vC
-     RPInAkbmamteezpKOqC5Knj0ZpqU+CnWkuyYnjslX1e9O5lbupLTp5NOqZRCFn1i
-     iTjpoNefgqLE3sHedgb2P1vS8lO+EIhRnWgfN9qAHSqkQ+ZObxIfPJFdcluu8d/K
-     tXsFkKmmFuEHd0SrYpBh9ZCLDgq2x9Y=
-     -----END CERTIFICATE-----
+     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
+     -----END CERTIFICATE----- 
    path: /etc/boto_cacerts.txt
    permissions: '0644'
    owner: root:root
