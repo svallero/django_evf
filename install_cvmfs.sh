@@ -13,3 +13,7 @@ CVMFS_CACHE_BASE=/var/lib/cvmfs
 CVMFS_HTTP_PROXY="http://t2-squid-01.to.infn.it:3128|http://t2-squid-02.to.infn.it:3128"
 EOF
 
+service autofs restart
+
+cvmfs_config setup
+cvmfs_config probe
