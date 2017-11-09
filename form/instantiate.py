@@ -29,9 +29,16 @@ def main(farm):
   vm_deploy_time=farm.vm_deploy_time
   #################################
 
-  # substitute variables in slave template file
+  image_description=farm.get_master_image_display()
+  slave_context='context_files/context_slave_centos.cloudinit'
+  master_context='context_files/context_master_centos.cloudinit'
+
+  if 'CVMFS' in image_description:
+     slave_context='context_files/context_slave_centos_cvmfs.cloudinit'
+     master_context='context_files/context_master_centos_cvmfs.cloudinit'
+  
   try:
-     f_slave=open(os.path.join(settings.BASE_DIR, 'context_files/context_slave_centos.cloudinit'),'r')
+     f_slave=open(os.path.join(settings.BASE_DIR, slave_context),'r')
      user_data_slave=f_slave.read()
      user_data_slave=user_data_slave.replace("<condor_secret>", str(shared_secret))
      user_data_slave=user_data_slave.replace("<worker_userdata>", indent(worker_userdata,'     '))
@@ -43,7 +50,7 @@ def main(farm):
   
   # substitute variables in master template file
   try:
-     f_master=open(os.path.join(settings.BASE_DIR, 'context_files/context_master_centos.cloudinit'),'r')
+     f_master=open(os.path.join(settings.BASE_DIR, master_context),'r')
      user_data_master=f_master.read()
  
      user_data_master=user_data_master.replace("<check_queue_every_s>", str(check_queue_every))

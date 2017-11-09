@@ -8,6 +8,7 @@ class FarmDescription(models.Model):
     IMAGES = (
         ('ami-00000679', '679 - UbuntuServer 14.04'),
         ('ami-00000687', '687 - CentOS 6.6'),
+        ('ami-00000866', '866 - CentOS 6.6 CVMFS'),
     )
 
     FLAVOURS = (
@@ -31,6 +32,7 @@ class FarmDescription(models.Model):
     ssh_key = models.CharField(verbose_name="root ssh key", max_length=1000, default='')
     # master configuration
     master_image = models.CharField(verbose_name="OS image", max_length=30, choices=IMAGES, default='CentOS')
+     
     master_flavour = models.CharField(verbose_name="Master flavour", max_length=30, choices=FLAVOURS, default='m1.small')
     #master_userdata = models.TextField(verbose_name="Master user-data", max_length=1000, default='')
     master_userdata = models.TextField(verbose_name="Master user-data", default='')

@@ -1,0 +1,100 @@
+#cloud-config
+
+# Mailto: svallero@to.infn.it
+
+bootcmd:
+  - chkconfig elastiq off || sysv-rc-conf elastiq off 
+
+users:
+ - default
+
+# fatto nell' imagine di base
+#packages:
+# - condor
+
+# partition the ephemeral disk
+disk_setup:
+  /dev/vdb:
+    type: 'mbr'
+    layout:
+      - [25,82] # 1/4 is swap
+      - 25      # 1/4 is /tmp
+      - 50      # 1/2 is /cvmfs
+    overwrite: True
+
+fs_setup:
+    - label:  swap
+      filesystem: 'swap'
+      device: '/dev/vdb1'
+    - label: tmp
+      filesystem: 'ext4'
+      device: '/dev/vdb2'
+      partition: 'auto'
+    - label: cvmfs
+      filesystem: 'ext4'
+      device: '/dev/vdb3'
+      partition: 'auto'
+
+mounts:
+  - [ "/dev/vdb1", "none",  "swap", "sw", "0", "0" ]
+  - [ "/dev/vdb2", "/tmp",  "ext4", "defaults", "0", "0" ]
+  - [ "/dev/vdb3", "/var/lib/cvmfs",  "ext4", "defaults", "0", "0" ]
+
+#yum_repos:
+#  # http://research.cs.wisc.edu/htcondor/yum/repo.d/htcondor-stable-rhel6.repo
+#  htcondor-stable:
+#    name: HTCondor Stable RPM Repository for Redhat Enterprise Linux 6
+#    baseurl: http://research.cs.wisc.edu/htcondor/yum/stable/rhel6
+#    enabled: true
+#    gpgcheck: false
+
+write_files:
+ - content: |
+     # written by cloud-init
+     DAEMON_LIST = MASTER, STARTD
+     CONDOR_HOST = %ipv4% 
+     CONDOR_ADMIN = root@%ipv4%
+     UID_DOMAIN = *
+     TRUST_UID_DOMAIN = True
+     SOFT_UID_DOMAIN = True
+     QUEUE_SUPER_USERS = root, condor
+     HIGHPORT = 42000
+     LOWPORT = 41000
+     SEC_DAEMON_AUTHENTICATION = required
+     SEC_DAEMON_INTEGRITY = required
+     SEC_DAEMON_AUTHENTICATION_METHODS = password
+     SEC_CLIENT_AUTHENTICATION_METHODS = password,fs,gsi,kerberos
+     SEC_PASSWORD_FILE = /etc/condor/condor_credential
+     SEC_ENABLE_MATCH_PASSWORD_AUTHENTICATION = True
+     ALLOW_DAEMON = condor_pool@*, submit-side@matchsession
+     COLLECTOR_NAME = Condor cluster at \$(CONDOR_HOST)
+     NEGOTIATOR_INTERVAL = 20
+     START = TRUE
+     SUSPEND = FALSE
+     PREEMPT = FALSE
+     KILL = FALSE
+     TRUST_UID_DOMAIN = TRUE
+     UPDATE_COLLECTOR_WITH_TCP = True
+     COLLECTOR_SOCKET_CACHE_SIZE = 1000
+     # this is a dummy value to prevent job killing for consuming too much mem
+     JOB_DEFAULT_REQUESTMEMORY = 42
+   path: /etc/condor/condor_config.local
+   permissions: '0644'
+   owner: root:root
+ - content: |
+     # written by cloud-init
+<worker_userdata>
+   path: /root/custom_user_data
+   permissions: '0770'
+   owner: root:root
+
+runcmd:
+ - [ chmod, 1777, /tmp ]
+ - [ swapoff, /swap ]
+ - [ rm, -rf, /swap ]
+ - [ service, iptables, stop ]
+ - [ mv, -f, /etc/condor/condor_config.rpmnew, /etc/condor/condor_config ]
+ - [ rm, -f, /etc/condor/condor_credential ]
+ - [ condor_store_cred, add, -c, -p, <condor_secret> ]
+ - [ /root/custom_user_data ]
+ - [ service, condor, start ]
