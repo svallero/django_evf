@@ -6,15 +6,19 @@ from django.core.urlresolvers import reverse
 class FarmDescription(models.Model):
 
     IMAGES = (
+        ('ami-00000979', '979 - UbuntuServer 18.04'),
+        ('ami-00000977', '977 - UbuntuServer 16.04'),
         ('ami-00000679', '679 - UbuntuServer 14.04'),
         ('ami-00000687', '687 - CentOS 6.6'),
         ('ami-00000866', '866 - CentOS 6.6 CVMFS'),
+        ('ami-00000984', '984 - CentOS 6.6 CVMFS (new kernel)'),
     )
 
     FLAVOURS = (
         ('m1.tiny', 'm1.tiny'),
         ('m1.small', 'm1.small'),
         ('m1.medium', 'm1.medium'),
+        ('m1.medium_pimped', 'm1.medium_pimped'),
         ('m1.large', 'm1.large'),
         ('m1.xlarge', 'm1.xlarge'),
     )

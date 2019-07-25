@@ -7,12 +7,13 @@ from  base64 import b64encode, encodestring
 
 #def main(access, secret, flavour,image):
 def main():
+  BASE_DIR="/home/evf/django_evf/"
   # this should come from Django later
   ec2_access_key = 'svallero'
   ec2_secret_key = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'
   ssh_key = 'sara'
-  master_image = 'ami-00000653'
-  master_flavour = 'm1.large'
+  master_image = 'ami-00000983'
+  master_flavour = 'm1.small'
   master_userdata =  'echo "pippo" > /root/pippo.txt'
   worker_flavour  = 'm1.large'
   worker_userdata =  'echo "pippo" > /root/pippo.txt'
@@ -37,7 +38,8 @@ def main():
   # encode workers user-data in base64 
   user_data_slave_b64=b64encode(user_data_slave)
   
-  f_master=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_master_centos.cloudinit','r')
+  #f_master=open('/Users/svallero/Django/evf_provisioning/evf/context_files/context_master_centos.cloudinit','r')
+  f_master=open(os.path.join(BASE_DIR, 'context_files/context_master_centos.cloudinit'),'r')
   user_data_master=f_master.read()
   
   user_data_master=user_data_master.replace("<check_queue_every_s>", str(check_queue_every))
@@ -57,19 +59,19 @@ def main():
   user_data_master=user_data_master.replace("<user_data_b64>", str(user_data_slave_b64))
   user_data_master=user_data_master.replace("<condor_secret>", str(shared_secret))
 
-  print (user_data_master)
+  #print (user_data_master)
   #print user_data_slave_b64
 
 
-  #conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
-  #                               aws_access_key_id=access,
-  #                               aws_secret_access_key=secret,
-  #                               validate_certs=False)
-  #conn.run_instances(image,instance_type=flavour,user_data=str(f.read()))
-  #reservations = conn.get_all_reservations()
-  #inst=reservations[0].instances
-  #return inst[-1]
-  return 1
+  conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
+                                 aws_access_key_id=ec2_access_key,
+                                 aws_secret_access_key=ec2_secret_key,
+                                 validate_certs=False)
+  conn.run_instances(master_image,instance_type=master_flavour,user_data=user_data_master)
+  reservations = conn.get_all_reservations()
+  inst=reservations[0].instances
+  return inst[-1]
+  #return 1
 
 main()
   

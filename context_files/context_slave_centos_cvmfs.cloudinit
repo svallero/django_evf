@@ -96,5 +96,10 @@ runcmd:
  - [ mv, -f, /etc/condor/condor_config.rpmnew, /etc/condor/condor_config ]
  - [ rm, -f, /etc/condor/condor_credential ]
  - [ condor_store_cred, add, -c, -p, <condor_secret> ]
+# point to local frontier squid
+ - [ sed, -i, '/proxy url/d', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<load balance="proxies"/a\        <proxy url="http://one-services.to.infn.it:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<proxy url/a\        <backupproxy url="http://cmsbproxy.fnal.gov:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<proxy url/a\        <backupproxy url="http://cmsbpfrontier.cern.ch:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
  - [ /root/custom_user_data ]
  - [ service, condor, start ]

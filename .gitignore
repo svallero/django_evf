@@ -1,4 +1,6 @@
 db.sqlite3
 venv
 log
+*/*.pyc
+form/__pycache__/*.pyc
 *.pyc

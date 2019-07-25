@@ -195,4 +195,11 @@ runcmd:
  #- [wget, -O, /etc/yum.repos.d/cernvm.repo, http://cvmrepo.web.cern.ch/cvmrepo/yum/cernvm.repo] 
  #- [wget, -O, "/etc/pki/rpm-gpg/RPM-GPG-KEY-CernVM", "http://cvmrepo.web.cern.ch/cvmrepo/yum/RPM-GPG-KEY-CernVM"]
  #- [yum, -y, install, cvmfs, cvmfs-config-default] 
+# point to local frontier squid
+ - [ sed, -i, '/proxy url/d', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<load balance="proxies"/a\        <proxy url="http://one-services.to.infn.it:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<proxy url/a\        <backupproxy url="http://cmsbproxy.fnal.gov:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+ - [ sed, -i, '/<proxy url/a\        <backupproxy url="http://cmsbpfrontier.cern.ch:3128"/>', /etc/cvmfs/CMS_SITECONF/local/JobConfig/site-local-config.xml]
+
+# run custom userdata 
  - [ /root/custom_user_data ]
