@@ -1,6 +1,6 @@
-
 import boto
 import os
+import sys
 
 def main():
   # this should come from Django later
@@ -9,8 +9,8 @@ def main():
   #ec2_access_key = 'oneadmin'
   #ec2_secret_key = 'd2154097e7420fb39d8b101dd521cc29717772eb'
   ssh_key = 'sara'
-  master_image = 'ami-00000983'
-  master_flavour = 'm1.large'
+  master_image = 'ami-00000984'
+  master_flavour = 'm1.small'
   master_userdata =  'echo "pippo" > /root/pippo.txt'
   worker_flavour  = 'm1.large'
   worker_userdata =  'echo "pippo" > /root/pippo.txt'
@@ -26,24 +26,35 @@ def main():
   ###########################################################################
  
   try:
-    conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
+    import logging
+    logging.getLogger('boto').setLevel(logging.DEBUG)
+    logging.getLogger('urllib3').setLevel(logging.DEBUG)
+    boto.set_file_logger('boto', 'boto.log')
+    conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api",
                                  aws_access_key_id=str(ec2_access_key),
                                  aws_secret_access_key=str(ec2_secret_key),
 				 #validate_certs=False,
+				 is_secure=True,
                                  debug=10)
-    conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key)
-    #print (conn.get_params())
+#    conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key)
+    print (conn.get_params())
     #conn.run_instances(master_image,instance_type=master_flavour)
-    reservations=conn.get_all_reservations()
+    conn.get_all_reservations()
+    #print ("Error: ",conn.ResponseError)
     #reservations = conn.get_all_reservations(dry_run = True)
     #reservations = conn.get_only_instances()
-    inst=reservations[0].instances
+#    inst=reservations[0].instances
     #return inst[-1]
     #print inst 
-    #print (boto.exception.EC2ResponseError)
+#    print (boto.exception.EC2ResponseError)
     #return 1
-  except Exception as e:
-    print str(e) 
+  except:
+     print ("Ciccia!") 
+     errore = sys.exc_info()[0]
+     print( "<p>Error: %s</p>" % errore )
+     raise
+  #except Exception as e:
+    #print(e) 
 
 main()
   

@@ -78,8 +78,8 @@ def main(farm):
   # make ec2 connection and run instance
   try:
      conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
-                                 aws_access_key_id=ec2_access_key,
-                                 aws_secret_access_key=ec2_secret_key)
+                                 aws_access_key_id=str(ec2_access_key),
+                                 aws_secret_access_key=str(ec2_secret_key))
                                  #validate_certs=False)
      conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key, user_data=str(user_data_master))
      reservations = conn.get_all_reservations()

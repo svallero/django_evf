@@ -4,3 +4,4 @@ log
 */*.pyc
 form/__pycache__/*.pyc
 *.pyc
+form/*.log

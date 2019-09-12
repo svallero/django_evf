@@ -12,6 +12,7 @@ class FarmDescription(models.Model):
         ('ami-00000687', '687 - CentOS 6.6'),
         ('ami-00000866', '866 - CentOS 6.6 CVMFS'),
         ('ami-00000984', '984 - CentOS 6.6 CVMFS (new kernel)'),
+        ('ami-00001017', '1017 - CentOS 7.6'),
     )
 
     FLAVOURS = (
