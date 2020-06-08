@@ -12,7 +12,7 @@ def main():
   ec2_access_key = 'svallero'
   ec2_secret_key = '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'
   ssh_key = 'sara'
-  master_image = 'ami-00000983'
+  master_image = 'ami-00001034'
   master_flavour = 'm1.small'
   master_userdata =  'echo "pippo" > /root/pippo.txt'
   worker_flavour  = 'm1.large'

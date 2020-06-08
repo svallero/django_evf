@@ -3,6 +3,7 @@ from django.conf import settings
 from form.models import FarmDescription
 from binascii import b2a_base64, b2a_uu
 import os
+import sys
 from  base64 import b64encode
 from textwrap import indent
 
@@ -79,8 +80,10 @@ def main(farm):
   try:
      conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api/",
                                  aws_access_key_id=str(ec2_access_key),
-                                 aws_secret_access_key=str(ec2_secret_key))
-                                 #validate_certs=False)
+                                 aws_secret_access_key=str(ec2_secret_key),
+                                 validate_certs=True,
+                                 #is_secure=True,
+                                 debug=10)
      conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key, user_data=str(user_data_master))
      reservations = conn.get_all_reservations()
      inst=reservations[0].instances

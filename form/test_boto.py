@@ -1,6 +1,20 @@
 import boto
 import os
 import sys
+from http import client as http_client
+import ssl
+
+def create_factory(host):
+    return (
+	http_client.HTTPSConnection(
+	    host = host,
+            context = ssl.create_default_context(cafile="/etc/boto_cacerts.txt")
+	    #port = 8000,
+	    #context = ssl._create_unverified_context()
+	)
+    )
+
+factory = (create_factory, ())
 
 def main():
   # this should come from Django later
@@ -31,11 +45,12 @@ def main():
     logging.getLogger('urllib3').setLevel(logging.DEBUG)
     boto.set_file_logger('boto', 'boto.log')
     conn=boto.connect_ec2_endpoint("https://one-master.to.infn.it/ec2api",
-                                 aws_access_key_id=str(ec2_access_key),
-                                 aws_secret_access_key=str(ec2_secret_key),
-				 #validate_certs=False,
-				 is_secure=True,
-                                 debug=10)
+			 aws_access_key_id=str(ec2_access_key),
+			 aws_secret_access_key=str(ec2_secret_key),
+  			 validate_certs=True,
+			 #https_connection_factory=factory,
+			 #is_secure=True,
+                         debug=10)
 #    conn.run_instances(master_image,instance_type=master_flavour,key_name=ssh_key)
     print (conn.get_params())
     #conn.run_instances(master_image,instance_type=master_flavour)
@@ -46,12 +61,12 @@ def main():
 #    inst=reservations[0].instances
     #return inst[-1]
     #print inst 
-#    print (boto.exception.EC2ResponseError)
+    #print (boto.exception.EC2ResponseError)
     #return 1
   except:
      print ("Ciccia!") 
      errore = sys.exc_info()[0]
-     print( "<p>Error: %s</p>" % errore )
+     print( "Error: %s" % errore )
      raise
   #except Exception as e:
     #print(e) 
